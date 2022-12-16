@@ -153,7 +153,7 @@ def train(gnn, gen, n_classes=args.n_classes, iters=args.num_examples_train):
     print ('Final avg train acc', np.mean(acc_lst))
     print ('Final std train acc', np.std(acc_lst))
 
-def test_single(gnn, gen, n_classes, it):
+def eval_single(gnn, gen, n_classes, it):
 
     start = time.time()
     W, labels = gen.sample_otf_single(is_training=False, cuda=torch.cuda.is_available())
@@ -197,12 +197,12 @@ def test_single(gnn, gen, n_classes, it):
 
     return loss_value, acc_test
 
-def test(gnn, gen, n_classes, iters=args.num_examples_test):
+def eval(gnn, gen, n_classes, iters=args.num_examples_test):
     gnn.train()
     loss_lst = np.zeros([iters])
     acc_lst = np.zeros([iters])
     for it in range(iters):
-        loss_single, acc_single = test_single(gnn, gen, n_classes, it)
+        loss_single, acc_single = eval_single(gnn, gen, n_classes, it)
         loss_lst[it] = loss_single
         acc_lst[it] = acc_single
         torch.cuda.empty_cache()
@@ -288,4 +288,4 @@ if __name__ == '__main__':
         print ('model status: train')
         gnn.train()
 
-    test(gnn, gen, args.n_classes)
+    eval(gnn, gen, args.n_classes)
